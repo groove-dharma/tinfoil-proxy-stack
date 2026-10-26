@@ -1,0 +1,14 @@
+services:
+  tinfoil-proxy:
+    build: .
+    expose:
+      - "3302"
+    environment:
+      - TINFOIL_API_KEY=${TINFOIL_API_KEY}
+      # - TINFOIL_MODELS=model-a,model-b
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:3302/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
