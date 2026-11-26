@@ -1,5 +1,5 @@
 image:
-  repository: tinfoil-proxy
+  repository: ghcr.io/groove-dharma/tinfoil-proxy-stack
   tag: 1.2.0
   pullPolicy: IfNotPresent
 
