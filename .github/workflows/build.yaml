@@ -43,7 +43,6 @@ jobs:
             -d '{"ref":"${{ github.sha }}","inputs":{"version":"'"$VERSION"'"}}'
 
   docker:
-    if: github.event_name != 'workflow_dispatch' || inputs.version != ''
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -56,18 +55,23 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - uses: docker/metadata-action@v5
+        id: meta
+        with:
+          images: ghcr.io/${{ github.repository }}
+
       - name: Resolve image tags
         id: tags
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "tags=ghcr.io/${{ github.repository }}:${{ inputs.version }}" >> "$GITHUB_OUTPUT"
+            TAGS="ghcr.io/${{ github.repository }}:${{ inputs.version }}"
           else
-            echo "tags=${{ steps.meta.outputs.tags }}" >> "$GITHUB_OUTPUT"
+            TAGS="${{ steps.meta.outputs.tags }}"
           fi
-
-      - uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/${{ github.repository }}
+          if [ -z "$TAGS" ]; then
+            echo "no tags resolved; refusing to build"; exit 1
+          fi
+          echo "tags=$TAGS" >> "$GITHUB_OUTPUT"
 
       - uses: docker/build-push-action@v6
         with:
