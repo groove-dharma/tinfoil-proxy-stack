@@ -7,10 +7,10 @@ from tinfoil import AsyncTinfoilAI
 
 app = FastAPI(title="Tinfoil Attestation Proxy")
 logger = logging.getLogger("tinfoil-proxy")
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+logging.basicConfig(level=os.environ.get("LOG_LEVEL", "INFO"), format="%(asctime)s [%(levelname)s] %(message)s")
 
 TINFOIL_API_KEY = os.environ.get("TINFOIL_API_KEY", "")
-client = AsyncTinfoilAI(api_key=TINFOIL_API_KEY, timeout=300)
+client = AsyncTinfoilAI(api_key=TINFOIL_API_KEY, timeout=int(os.environ.get("REQUEST_TIMEOUT", "300")))
 
 KNOWN_CHAT = {"model", "messages", "temperature", "max_tokens", "top_p",
               "frequency_penalty", "presence_penalty", "stop", "stream",
@@ -95,7 +95,7 @@ async def embeddings(request: Request):
             media_type="application/json",
         )
 
-    BATCH_SIZE = 32
+    BATCH_SIZE = int(os.environ.get("EMBED_BATCH_SIZE", "32"))
 
     if isinstance(input_data, str) or (isinstance(input_data, list) and len(input_data) <= BATCH_SIZE):
         try:
