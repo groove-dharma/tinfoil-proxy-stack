@@ -53,6 +53,9 @@ http://tinfoil-proxy:3302/v1
 | --- | --- | --- | --- |
 | `TINFOIL_API_KEY` | yes | none | Your Tinfoil API key |
 | `TINFOIL_MODELS` | no | built-in catalog | Comma-separated model IDs served by `/v1/models` |
+| `REQUEST_TIMEOUT` | no | `300` | Client timeout in seconds for calls to the Tinfoil enclave |
+| `EMBED_BATCH_SIZE` | no | `32` | Inputs per upstream call when a request exceeds one batch |
+| `LOG_LEVEL` | no | `INFO` | Python log level for the proxy |
 
 ## Endpoints
 

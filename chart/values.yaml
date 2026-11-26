@@ -1,0 +1,29 @@
+image:
+  repository: tinfoil-proxy
+  tag: 1.2.0
+  pullPolicy: IfNotPresent
+
+service:
+  port: 3302
+
+tinfoil:
+  # The API key is never committed: the Deployment reads it from a k8s
+  # Secret created out-of-band with kubectl (same pattern as minio-delta-daemon).
+  existingSecret: tinfoil-api-key
+  apiKeyKey: apiKey
+
+# Optional comma-separated override of the static model catalog.
+models: ""
+
+# Declarative tunables consumed by main.py via env.
+timeout: 300
+embedBatchSize: 32
+logLevel: INFO
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
